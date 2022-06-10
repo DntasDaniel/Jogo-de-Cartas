@@ -1,0 +1,333 @@
+<html>
+
+<head>
+  <title>
+    Imersão Dev - Aula 08
+  </title>
+</head>
+
+<body>
+  <div class="container">
+    <img src="https://www.alura.com.br/assets/img/imersoes/dev-2021/logo-imersao-super-trunfo.png" class="page-logo" alt="">
+    <h1 class="page-title">Super Trunfo</h1>
+    <button onclick="sortearCarta()" id="btnSortear">Sortear carta</button>
+    <form id="form">
+      <h2>Escolha o seu atributo</h2>
+      <div class="wrapper">
+        <div>
+          <div id="carta-jogador">
+            <img src="https://www.alura.com.br/assets/img/imersoes/dev-2021/card-super-trunfo-transparent-ajustado.png" style=" width: inherit; height: inherit; position: absolute;">
+
+          </div>
+        </div>
+        <div>
+          <div id="carta-maquina" class="carta"><img src="https://www.alura.com.br/assets/img/imersoes/dev-2021/card-super-trunfo-transparent-ajustado.png" style=" width: inherit; height: inherit; position: absolute;"></div>
+        </div>
+      </div>
+      <button class="button-jogar" type="button" id="btnJogar" onclick="jogar()" disabled="false">Jogar</button>
+      <h3 id="resultado"></h3>
+    </form>
+  </div>
+  
+  <script>
+    
+  var carta1 = {
+  nome: "Bulbassauro",
+  imagem:
+    "https://img.elo7.com.br/product/zoom/31CCAE3/escultura-em-papel-pokemon-bulbassauro-com-base-em-pvc-actionfigure.jpg",
+  atributos: {
+    ataque: 7,
+    defesa: 8,
+    vida: 6
+  }
+};
+var carta2 = {
+  nome: "Squirtle",
+  imagem:
+    "https://i.pinimg.com/564x/08/0f/b8/080fb8c21e86e9465d716219d7443d8e.jpg",
+  atributos: {
+    ataque: 5,
+    defesa: 9,
+    vida: 8
+  }
+};
+var carta3 = {
+  nome: "Vulpix",
+  imagem: "https://assets.pokemon.com/assets/cms2/img/pokedex/full/037.png",
+  atributos: {
+    ataque: 6,
+    defesa: 9,
+    vida: 7
+  }
+};
+var carta4 = {
+  nome: "Charmander",
+  imagem:
+    "https://cdn1.dotesports.com/wp-content/uploads/sites/3/2019/11/18100921/Screen_Shot_2017_11_07_at_1.39.21_PM.0-770x513.jpg",
+  atributos: {
+    ataque: 9,
+    defesa: 5,
+    vida: 8
+  }
+};
+var carta5 = {
+  nome: "Eevee",
+  imagem:
+    "https://mestrepokemon.com/wp-content/uploads/2020/03/Pok%C3%A9mon-Eevee-Pok%C3%A9dex.jpg",
+  atributos: {
+    ataque: 4,
+    defesa: 8,
+    vida: 9
+  }
+};
+
+var cartas = [carta1, carta2, carta3, carta4, carta5];
+var cartaMaquina;
+var cartaJogador;
+
+function sortearCarta() {
+  var numeroCartaMaquina = Math.floor(Math.random() * cartas.length);
+
+  console.log("Máquina");
+  console.log(numeroCartaMaquina);
+  cartaMaquina = cartas[numeroCartaMaquina];
+  console.log(cartaMaquina);
+
+  //Para assegurar  que não irá ter repetição de cartas entre máuina e usuário!
+  var numeroCartaUsuario = Math.floor(Math.random() * cartas.length);
+  while (numeroCartaUsuario == numeroCartaMaquina) {
+    numeroCartaUsuario = Math.floor(Math.random() * cartas.length);
+  }
+
+  console.log("Usuário");
+  console.log(numeroCartaUsuario);
+  cartaJogador = cartas[numeroCartaUsuario];
+  console.log(cartaJogador);
+
+  document.getElementById("btnSortear").disabled = true;
+  document.getElementById("btnJogar").disabled = false;
+
+  exibirCartarJogador();
+}
+
+function jogar() {
+  var atributoSelecionado = obtemAtributoSelecionado();
+  var elementoResultado = document.getElementById("resultado");
+  var valorCartaJogador = cartaJogador.atributos[atributoSelecionado];
+  var valorCartaMaquina = cartaMaquina.atributos[atributoSelecionado];
+  if (valorCartaJogador > valorCartaMaquina) {
+    elementoResultado.innerHTML =
+      `Você venceu, a carta ${cartaMaquina.nome} do oponente era: ` +
+      valorCartaMaquina;
+  } else if (valorCartaJogador < valorCartaMaquina) {
+    elementoResultado.innerHTML =
+      `Você perdeu, a carta ${cartaMaquina.nome} do oponente era: ` +
+      valorCartaMaquina;
+  } else {
+    elementoResultado.innerHTML =
+      `EMPATE, a carta ${cartaMaquina.nome} do oponente era: ` +
+      valorCartaMaquina;
+  }
+
+  document.getElementById("btnSortear").disabled = false;
+  document.getElementById("btnJogar").disabled = true;
+
+  // exibir carta da máquina
+  exibirCartaMaquina();
+}
+
+function obtemAtributoSelecionado() {
+  var radioAtributos = document.getElementsByName("atributo");
+  for (var i = 0; i < radioAtributos.length; i++) {
+    if (radioAtributos[i].checked == true) {
+      return radioAtributos[i].value;
+    }
+  }
+}
+
+function exibirCartarJogador() {
+  var divCartaJogador = document.getElementById("carta-jogador");
+  divCartaJogador.style.backgroundImage = `url(${cartaJogador.imagem})`;
+  var moldura =
+    '<img src="https://www.alura.com.br/assets/img/imersoes/dev-2021/card-super-trunfo-transparent-ajustado.png" style=" width: inherit; height: inherit; position: absolute;">';
+  var tagHTML = "<div id='opcoes' class='carta-status'>";
+
+  var opcoesTexto = "";
+  for (var atributo in cartaJogador.atributos) {
+    opcoesTexto +=
+      "<input type='radio' name='atributo' value='" +
+      atributo +
+      "'>" +
+      atributo +
+      " " +
+      cartaJogador.atributos[atributo] +
+      "<br>";
+  }
+  var nome = `<p class="carta-subtitle">${cartaJogador.nome}</p>`;
+
+  divCartaJogador.innerHTML = moldura + nome + tagHTML + opcoesTexto + "</div>";
+}
+
+function exibirCartaMaquina() {
+  var divCartaMaquina = document.getElementById("carta-maquina");
+  divCartaMaquina.style.backgroundImage = `url(${cartaMaquina.imagem})`;
+  var moldura =
+    '<img src="https://www.alura.com.br/assets/img/imersoes/dev-2021/card-super-trunfo-transparent-ajustado.png" style=" width: inherit; height: inherit; position: absolute;">';
+  var tagHTML = "<div id='opcoes' class='carta-status'>";
+
+  var opcoesTexto = "";
+  for (var atributo in cartaMaquina.atributos) {
+    opcoesTexto +=
+      "<P type='text' name='atributo' value='" +
+      atributo +
+      "'>" +
+      atributo +
+      " " +
+      cartaMaquina.atributos[atributo] +
+      "</p>";
+  }
+  var nome = `<p class="carta-subtitle">${cartaMaquina.nome}</p>`;
+
+  divCartaMaquina.innerHTML = moldura + nome + tagHTML + opcoesTexto + "</div>";
+}
+
+    
+  </script>
+  
+  <style>
+    
+  body {
+  font-family: "Roboto Mono", monospace;
+  min-height: 854px;
+  background-image: url("http://3.bp.blogspot.com/-og6UiSqjMVY/Uz86rbCFZ_I/AAAAAAAAEVw/5OjxfqQuJuA/s1600/nblast_04-04_pokemonblast.jpg");
+  background-color: #000000;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  padding-bottom: 20vh;
+}
+
+.container {
+  text-align: center;
+  padding: 20px;
+}
+
+.page-title {
+  color: #ffffff;
+  margin: 5px 0;
+}
+
+button,
+.button-jogar {
+  padding: 0.8rem 1.5rem;
+  margin: 1rem 0;
+  border-radius: 5px;
+  border: none;
+  font-size: 1rem;
+}
+
+h2 {
+  color: white;
+}
+
+#carta-jogador,
+#carta-maquina {
+  width: 360px;
+  height: 500px;
+  overflow: auto;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+  background-size: 350px 300px;
+  background-repeat: no-repeat;
+  background-position-x: 5px;
+  background-position-y: 10px;
+  border-radius: 33px;
+}
+
+#carta-jogador h3 {
+  text-align: center;
+}
+
+.carta-imagem {
+  border: 1px solid black;
+  height: 100px;
+  margin: 10px;
+}
+
+.carta-imagem img {
+  width: 100%;
+  height: 100%;
+}
+
+.carta-status {
+  height: 160px;
+  margin: 2rem;
+  color: white;
+  z-index: 2;
+}
+
+.carta-status input {
+  margin: 20px 10px;
+}
+
+.resultado-final {
+  color: white;
+  font-size: 2rem;
+  text-transform: uppercase;
+  font-weight: bolder;
+  padding: 1rem;
+  border: 2px solid black;
+  background-color: black;
+}
+
+.--spacing {
+  margin-left: 2.5rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.carta-subtitle {
+  z-index: 2;
+  position: absolute;
+  top: 16px;
+  left: 37px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+#cartas {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.carta-status p {
+  margin-bottom: 2rem;
+}
+
+h3 {
+  color: Black;
+  background-color: lightblue;
+  font-size: 45px;
+  border-style: double;
+}
+
+ 
+ </style>
+  
+</body>
+
+</html>
